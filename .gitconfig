@@ -1,0 +1,32 @@
+# This is Git's per-user configuration file.
+[user]
+	name = Ihar Khorau
+	email = dostup.96@gmail.com
+
+[alias]
+	np = !git --no-pager
+	hist = log --pretty=format:'%<(25) %an%<(30)%ad  %Cred%H  %Creset%s'
+	last = !git log -1 --pretty=format:'%<(25) %an%<(30)%ad  %Cred%H  %Creset%s'
+	su = submodule update --init --recursive
+	pr = pull --rebase 
+	co = checkout
+	br = branch
+	files = diff-tree --name-only -r
+	lid = !git np log -1 --pretty=tformat:"%h"
+
+[core]
+	editor = vim
+	pager = less -R
+        autocrlf = true
+
+[diff]
+	tool = vimdiff
+
+[difftool]
+	promt = false
+
+[pager]
+	branch = false
+
+[credential]
+	helper = store
