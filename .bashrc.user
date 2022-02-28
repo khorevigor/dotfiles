@@ -1,0 +1,25 @@
+export __scriptsDir="$HOME/.scripts/"
+export __projectsDir="/mnt/g/w/proj/"
+
+# export PS1='$(__git_ps1) \w\$ '
+
+alias f="find"
+alias g="grep -n"
+alias gi="grep -ni"
+alias h="head -n"
+alias t="tail -n"
+alias x="xargs"
+alias xi="xargs -I"
+alias rl="readlink -f"
+
+alias last="$__scriptsDir/LastN.sh"
+alias prev="last 2 | t 1"
+
+alias cdl='cd `last`'
+alias cdp="cd $__projectsDir"
+
+# WSL specific copy-paste stuff below
+# get paste.exe:
+# c3scripts.com/tutorials/msdos/paste.html
+alias c="clip.exe"
+alias v="paste.exe"
