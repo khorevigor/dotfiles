@@ -1,5 +1,5 @@
 export __scriptsDir="$HOME/.scripts/"
-export __projectsDir="/mnt/g/w/proj/"
+export __projectsDir="/mnt/f/w/p/"
 
 # export PS1='$(__git_ps1) \w\$ '
 
@@ -11,6 +11,8 @@ alias t="tail -n"
 alias x="xargs"
 alias xi="xargs -I"
 alias rl="readlink -f"
+
+alias extract="$__scriptsDir/ExtractLastOrSpecified.sh"
 
 alias last="$__scriptsDir/LastN.sh"
 alias prev="last 2 | t 1"
