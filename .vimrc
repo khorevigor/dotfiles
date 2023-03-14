@@ -1,3 +1,23 @@
+set number
+syntax on
+:au SwapExists * let v:swapchoice = 'e'
+
+" set tab to 2 spaces
+set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
+
+" include FT tags file
+set tags=/local/scratch/zihakoh/ft/bin/.build/tags
+
+" global copy-paste
+vnoremap <C-c> "+y
+nnoremap <C-v> "+p
+
+"" xclip copy-paste
+vnoremap <F7> :w !xclip<CR><CR>
+nnoremap <S-F7> :r !xclip -o<CR>
+
+" search selected
+vnoremap <C-_> y/<C-r>"
 
 "---------------------------------------------------------------------------
 " swap splits with each other
@@ -111,4 +131,3 @@ nnoremap <C-_> :call ToggleCommentC()<CR>
 " highlight if line lenght bigger than 111
  " highlight OverLength ctermbg=red ctermfg=white guibg=#592929
  " match OverLength /\%111v.\+/
-noremap <c-]> :call FollowTag()<CR>

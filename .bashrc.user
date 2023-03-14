@@ -1,16 +1,37 @@
+#########
+# To be used inside script files only
 export __scriptsDir="$HOME/.scripts/"
-export __projectsDir="/mnt/f/w/p/"
 
-# export PS1='$(__git_ps1) \w\$ '
+# ///
+export __projectsDir="/local/scratch/$USER"
+export __qtDir="$__projectsDir/qtcreator/qtcreator"
+#
+#########
+
+# General purpose
+export MTAS_IP="192.168.83.100"
+export SCRATCH="$__projectsDir"
+
+# /// gerrit
+export dev="HEAD:refs/for/develop"
+export ddraft="HEAD:refs/drafts/develop"
+
+export master="HEAD:refs/for/master"
+export mdraft="HEAD:refs/drafts/master"
+
+# Cutstom prompt with git branch highlighting
+source $__scriptsDir/gitBranchInPrompt.bash
 
 alias f="find"
-alias g="grep -n"
-alias gi="grep -ni"
 alias h="head -n"
 alias t="tail -n"
 alias x="xargs"
 alias xi="xargs -I"
 alias rl="readlink -f"
+
+GREP_FLAGS="--color=always"
+alias g="grep $GREP_FLAGS"
+alias gi="grep i $GREP_FLAGS"
 
 alias extract="$__scriptsDir/ExtractLastOrSpecified.sh"
 
@@ -19,9 +40,37 @@ alias prev="last 2 | t 1"
 
 alias cdl='cd `last`'
 alias cdp="cd $__projectsDir"
+alias cdf="cd $__projectsDir/ft"
+alias cdm="cd $__projectsDir/mtas_design"
+alias cdt="cd $__qtDir/toolkit"
+
+alias psd="pushd `pwd` > /dev/null"
+alias ppd="popd > /dev/null"
+
+alias callflow_grep="$__projectsDir/mtas_design/tools/utils/trace/callflow_grep.pl"
+
+alias ctags="$__scriptsDir/CreateAndTruncateCTags.sh"
+
+alias connectCba="$__scriptsDir/ConnectToCbaSim.bash"
+
+alias share="$__scriptsDir/Share.sh"
+
+alias SOURCE_CBA="psd && cd $__projectsDir/mtas_design/tas/tas_code/imsas/src/ && source cba_setup && ppd"
+alias SOURCE_FT="psd && cd $__projectsDir/ft/ && source setup && ppd"
+alias SOURCE_TOOLKIT="psd && cdt && source setup-toolkit.bash && ppd"
+
+alias sigflow="$__scriptsDir/SigflowWithIp.sh"
+# alias web_sigflow="xdg-open https://mtas-sigflow.sero.wh.rnd.internal.ericsson.com/"     # Open in default browser
+alias web_sigflow="google-chrome https://mtas-sigflow.sero.wh.rnd.internal.ericsson.com/"
+
+alias qt="$__qtDir/qtcreator-run.sh"
+
+# copy-paste
+alias c="xclip"
+alias v="xclip -o"
 
 # WSL specific copy-paste stuff below
 # get paste.exe:
 # c3scripts.com/tutorials/msdos/paste.html
-alias c="clip.exe"
-alias v="paste.exe"
+#alias c="clip.exe"
+#alias v="paste.exe"
