@@ -1,32 +1,27 @@
 # This is Git's per-user configuration file.
 [user]
-	name = 
-	email = 
+	name = Your name
+	email = your.name@example.com
 
 [alias]
 	np = !git --no-pager
 	hist = log --pretty=format:'%<(25) %an%<(30)%ad  %Cred%H  %Creset%s'
-	last = !git log -1 --pretty=format:'%<(25) %an%<(30)%ad  %Cred%H  %Creset%s'
+	last = !git np log -1 --pretty=format:'%<(25) %an%<(30)%ad  %Cred%H  %Creset%s'
 	su = submodule update --init --recursive
+	suf = !git su --force
 	pr = pull --rebase 
 	co = checkout
-	br = branch
+  cpk = cherry-pick
+	br = !git np branch 
 	files = diff-tree --name-only -r
 	lid = !git np log -1 --pretty=tformat:"%h"
 
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  required = true
+
 [core]
+	pager = less -r
 	editor = vim
-	pager = less -R
-        autocrlf = true
 
-[diff]
-	tool = vimdiff
-
-[difftool]
-	promt = false
-
-[pager]
-	branch = false
-
-[credential]
-	helper = store

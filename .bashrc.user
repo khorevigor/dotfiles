@@ -1,6 +1,8 @@
-#########
 # To be used inside script files only
+#########
 export __scriptsDir="$HOME/.scripts"
+export __sharedLocationCommon="/proj/tas/temp"
+export __sharedLocationPersonal="$__sharedLocationCommon/$USER"
 
 # ///
 export __projectsDir="/local/scratch/$USER"
@@ -9,10 +11,10 @@ export __qtDir="$__projectsDir/qtcreator/qtcreator"
 #########
 
 # General purpose
-export MTAS_IP="192.168.83.100"
 export SCRATCH="$__projectsDir"
 
-# /// gerrit
+# ///
+# gerrit
 export dev="HEAD:refs/for/develop"
 export ddraft="HEAD:refs/drafts/develop"
 
@@ -35,6 +37,10 @@ alias gi="grep -i"
 alias gc="grep $GREP_FLAGS"
 alias gci="grep -i $GREP_FLAGS"
 
+alias gfind_ttcn="find ./ -type f -name \"*.ttcn\" | x grep "
+alias gfind_cc="find ./ -type f -name \".cc\" | x grep "
+alias gfind_py="find ./ -type f -name \".py\" | x grep "
+
 alias extract="$__scriptsDir/ExtractLastOrSpecified.sh"
 alias extractAll="$__scriptsDir/ExtractAll.sh"
 
@@ -44,46 +50,38 @@ alias prev="last 2 | t 1"
 alias cdl='cd `last`'
 alias cdp="cd $__projectsDir"
 alias cdf="cd $__projectsDir/ft"
-alias cdm="cd $__projectsDir/mtas_design"
-alias cdt="cd $__qtDir/toolkit"
+alias cds="cd $__sharedLocationPersonal"
 
 alias psd="pushd `pwd` > /dev/null ; cd -"
 alias ppd="popd > /dev/null"
 
-alias callflow_grep="$__projectsDir/mtas_design/tools/utils/trace/callflow_grep.pl"
-
-alias ctags="$__scriptsDir/CreateAndTruncateCTags.sh"
-
-alias connectCba="$__scriptsDir/ConnectToCbaSim.bash"
-
 alias share="$__scriptsDir/Share.sh"
 
-alias compareAlien="vimdiff ~/tmp/expected.txt ~/tmp/received.txt"
-
-# Disable/enable git hooks in FT repo
-alias f_disableHooks="mv $__projectsDir/ft/.git/hooks $__projectsDir/ft/.git/hooks.bak"
-alias f_enableHooks="mv $__projectsDir/ft/.git/hooks.bak $__projectsDir/ft/.git/hooks"
-
-# Disable/enable git hooks in Design repo
-alias d_disableHooks="mv $__projectsDir/mtas_design/.git/hooks $__projectsDir/mtas_design/.git/hooks.bak"
-alias d_enableHooks="mv $__projectsDir/mtas_design/.git/hooks.bak $__projectsDir/mtas_design/.git/hooks"
-
-alias SOURCE_CBA="(cdm && cd /tas/tas_code/imsas/src/ && source cba_setup)"
-alias SOURCE_FT="(cdf && source setup)"
-alias SOURCE_TOOLKIT="(cdt && source setup-toolkit.bash)"
-
-alias sigflow="$__scriptsDir/SigflowWithIp.sh"
-# alias web_sigflow="xdg-open https://mtas-sigflow.sero.wh.rnd.internal.ericsson.com/"     # Open in default browser
-alias web_sigflow="firefox https://mtas-sigflow.sero.wh.rnd.internal.ericsson.com/"
-
-alias qt="$__qtDir/qtcreator-run.sh"
+# removes trailing spaces in specified file
+# OVERWRITES THE FILE!
+alias removeTrailingSpaces='sed "s/\s*$//g" -i'
 
 # copy-paste
 alias c="xclip"
 alias v="xclip -o"
 
-# xclip is not available on WSL environment, thus this paste.exe variant is to be used
+# in case if xclip is not available (on WSL environment, mostly) thus this paste.exe variant is to be used
 # get paste.exe here:
 # c3scripts.com/tutorials/msdos/paste.html
 #alias c="clip.exe"
 #alias v="paste.exe"
+
+# Disable/Enable hooks in current repo
+function getRepoRoot() {
+  echo `git rev-parse --show-toplevel`
+}
+
+function disableHooks() {
+  local rootPath=$(getRepoRoot)
+  mv $rootPath/.git/hooks $rootPath/.git/hooks.bak
+}
+
+function enableHooks() {
+  local rootPath=$(getRepoRoot)
+  mv $rootPath/.git/hooks.bak $rootPath/.git/hooks
+}

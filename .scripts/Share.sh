@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# SHARED_DIR="${HOME}/share/"
-SHARED_DIR="/proj/tas/temp/$USER/"
+# SHARED_DIR="/proj/tas/temp/$USER/"
+SHARED_DIR="$__sharedLocationPersonal"
 
 mkdir -p ${SHARED_DIR}
 
