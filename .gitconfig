@@ -1,7 +1,7 @@
 # This is Git's per-user configuration file.
 [user]
-	name = Ihar Khorau
-	email = dostup.96@gmail.com
+	name = 
+	email = 
 
 [alias]
 	np = !git --no-pager

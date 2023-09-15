@@ -1,6 +1,6 @@
 #########
 # To be used inside script files only
-export __scriptsDir="$HOME/.scripts/"
+export __scriptsDir="$HOME/.scripts"
 
 # ///
 export __projectsDir="/local/scratch/$USER"
@@ -19,7 +19,7 @@ export ddraft="HEAD:refs/drafts/develop"
 export master="HEAD:refs/for/master"
 export mdraft="HEAD:refs/drafts/master"
 
-# Cutstom prompt with git branch highlighting
+# Custom prompt with git branch highlighting
 source $__scriptsDir/gitBranchInPrompt.bash
 
 alias f="find"
@@ -30,10 +30,13 @@ alias xi="xargs -I"
 alias rl="readlink -f"
 
 GREP_FLAGS="--color=always"
-alias g="grep $GREP_FLAGS"
-alias gi="grep i $GREP_FLAGS"
+alias g="grep"
+alias gi="grep -i"
+alias gc="grep $GREP_FLAGS"
+alias gci="grep -i $GREP_FLAGS"
 
 alias extract="$__scriptsDir/ExtractLastOrSpecified.sh"
+alias extractAll="$__scriptsDir/ExtractAll.sh"
 
 alias last="$__scriptsDir/LastN.sh"
 alias prev="last 2 | t 1"
@@ -44,7 +47,7 @@ alias cdf="cd $__projectsDir/ft"
 alias cdm="cd $__projectsDir/mtas_design"
 alias cdt="cd $__qtDir/toolkit"
 
-alias psd="pushd `pwd` > /dev/null"
+alias psd="pushd `pwd` > /dev/null ; cd -"
 alias ppd="popd > /dev/null"
 
 alias callflow_grep="$__projectsDir/mtas_design/tools/utils/trace/callflow_grep.pl"
@@ -55,13 +58,23 @@ alias connectCba="$__scriptsDir/ConnectToCbaSim.bash"
 
 alias share="$__scriptsDir/Share.sh"
 
-alias SOURCE_CBA="psd && cd $__projectsDir/mtas_design/tas/tas_code/imsas/src/ && source cba_setup && ppd"
-alias SOURCE_FT="psd && cd $__projectsDir/ft/ && source setup && ppd"
-alias SOURCE_TOOLKIT="psd && cdt && source setup-toolkit.bash && ppd"
+alias compareAlien="vimdiff ~/tmp/expected.txt ~/tmp/received.txt"
+
+# Disable/enable git hooks in FT repo
+alias f_disableHooks="mv $__projectsDir/ft/.git/hooks $__projectsDir/ft/.git/hooks.bak"
+alias f_enableHooks="mv $__projectsDir/ft/.git/hooks.bak $__projectsDir/ft/.git/hooks"
+
+# Disable/enable git hooks in Design repo
+alias d_disableHooks="mv $__projectsDir/mtas_design/.git/hooks $__projectsDir/mtas_design/.git/hooks.bak"
+alias d_enableHooks="mv $__projectsDir/mtas_design/.git/hooks.bak $__projectsDir/mtas_design/.git/hooks"
+
+alias SOURCE_CBA="(cdm && cd /tas/tas_code/imsas/src/ && source cba_setup)"
+alias SOURCE_FT="(cdf && source setup)"
+alias SOURCE_TOOLKIT="(cdt && source setup-toolkit.bash)"
 
 alias sigflow="$__scriptsDir/SigflowWithIp.sh"
 # alias web_sigflow="xdg-open https://mtas-sigflow.sero.wh.rnd.internal.ericsson.com/"     # Open in default browser
-alias web_sigflow="google-chrome https://mtas-sigflow.sero.wh.rnd.internal.ericsson.com/"
+alias web_sigflow="firefox https://mtas-sigflow.sero.wh.rnd.internal.ericsson.com/"
 
 alias qt="$__qtDir/qtcreator-run.sh"
 
@@ -69,8 +82,8 @@ alias qt="$__qtDir/qtcreator-run.sh"
 alias c="xclip"
 alias v="xclip -o"
 
-# WSL specific copy-paste stuff below
-# get paste.exe:
+# xclip is not available on WSL environment, thus this paste.exe variant is to be used
+# get paste.exe here:
 # c3scripts.com/tutorials/msdos/paste.html
 #alias c="clip.exe"
 #alias v="paste.exe"
