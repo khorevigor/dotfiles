@@ -5,8 +5,12 @@ export __sharedLocationCommon="/proj/tas/temp"
 export __sharedLocationPersonal="$__sharedLocationCommon/$USER"
 
 # ///
-export __projectsDir="/local/scratch/$USER"
+export __projectsDir="/local/scratch/$USER/"
 export __qtDir="$__projectsDir/qtcreator/qtcreator"
+
+# mason
+export CNA_TOOLS=/local/ccsm/mason
+export PATH="$PATH:$CNA_TOOLS/scripts/"
 #
 #########
 
@@ -85,3 +89,4 @@ function enableHooks() {
   local rootPath=$(getRepoRoot)
   mv $rootPath/.git/hooks.bak $rootPath/.git/hooks
 }
+

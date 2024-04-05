@@ -25,3 +25,5 @@
 	pager = less -r
 	editor = vim
 
+[credential]
+  helper = store
