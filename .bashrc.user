@@ -5,8 +5,9 @@ export __sharedLocationCommon="/proj/tas/temp"
 export __sharedLocationPersonal="$__sharedLocationCommon/$USER"
 
 # ///
-export __projectsDir="/local/scratch/$USER/"
+export __projectsDir="/local"
 export __qtDir="$__projectsDir/qtcreator/qtcreator"
+export __ccsm_ft="$__projectsDir/ccsm/ft"
 
 # mason
 export CNA_TOOLS=/local/ccsm/mason
@@ -56,8 +57,16 @@ alias cdp="cd $__projectsDir"
 alias cdf="cd $__projectsDir/ft"
 alias cds="cd $__sharedLocationPersonal"
 
+alias k="kubectl"
+alias knc="kubectl create namespace"
+alias kng="kubectl get namespaces"
+alias kns="kubectl config set-context --current --namespace"
+alias mip="minikube ip"
+
 alias psd="pushd `pwd` > /dev/null ; cd -"
 alias ppd="popd > /dev/null"
+
+alias vscode="code"
 
 alias share="$__scriptsDir/Share.sh"
 
@@ -90,3 +99,146 @@ function enableHooks() {
   mv $rootPath/.git/hooks.bak $rootPath/.git/hooks
 }
 
+######
+# \\\ CCSM 
+#
+
+###
+# go env configuration
+
+export gerrit_url="gerrit.ericsson.se"
+
+export GO111MODULE='on'
+export GONOPROXY="$gerrit_url"
+export GONOSUMDB="$gerrit_url"
+export GOPRIVATE="$gerrit_irl"
+
+
+###
+# minikube setup. Credits to A. Kachalouski
+
+alias ft_pass='read -rsp "Enter password:" PASSWORD; export PASSWORD'
+
+get_env() {
+  echo "Reading env.txt"
+  cat ./env.txt
+
+  export HELM_VERSION="v"`cat env.txt | grep helm= | grep -oE '[0-9]+\.[0-9]+\.[0-9]+'`
+  export KUBERNETES_VERSION="v"`cat env.txt | grep kubectl= | grep -oE '[0-9]+\.[0-9]+\.[0-9]+'`
+  export MINIKUBE_VERSION="v"`cat env.txt | grep minikube= | grep -oE '[0-9]+\.[0-9]+\.[0-9]+'`
+
+  echo "HELM_VERSION=$HELM_VERSION"
+  echo "KUBERNETES_VERSION=$KUBERNETES_VERSION"
+  echo "MINIKUBE_VERSION=$MINIKUBE_VERSION"
+}
+
+install_helm() {
+  /usr/bin/expect << 'EOF'
+  set timeout 30
+  spawn sudo -i
+  expect {
+  "Enter Windows password:"
+    {
+      send "$env(PASSWORD)\n"
+        expect "root@$env(HOSTNAME):~#"
+      send "cd /tmp\n"
+      expect "root@$env(HOSTNAME):/tmp#"
+        send "curl -sLo helm.tar.gz https://arm.sero.gic.ericsson.se/artifactory/proj-iopensrc-dev-generic-local/com/storage.googleapis/kubernetes-helm/helm-$env(HELM_VERSION)-linux-amd64.tar.gz\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+        send "mkdir helm\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+        send "tar -xzf helm.tar.gz -C helm\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+        send "mv helm/linux-amd64/helm /usr/local/bin/helm \n"
+        expect "root@$env(HOSTNAME):/tmp#"
+        send "rm -rf helm*\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+        send "helm version --short\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+    }
+  }
+
+  exit 0
+  expect eof
+EOF
+}
+
+install_kubectl() {
+  /usr/bin/expect << 'EOF'
+
+  set timeout 30
+  spawn sudo -i
+  expect {
+  "Enter Windows password:"
+    {
+      send "$env(PASSWORD)\n"
+        expect "root@$env(HOSTNAME):~#"
+      send "cd /tmp\n"
+      expect "root@$env(HOSTNAME):/tmp#"
+        send "curl -LO https://arm.sero.gic.ericsson.se/artifactory/proj-iopensrc-dev-generic-local/com/storage.googleapis/kubernetes-release/release/$env(KUBERNETES_VERSION)/bin/linux/amd64/kubectl\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+        send "chmod +x kubectl\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+        send "mv kubectl /usr/local/bin/\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+        send "kubectl version --short\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+    }
+  }
+  exit 0
+  expect eof
+EOF
+}
+
+install_minikube() {
+  /usr/bin/expect << 'EOF'
+  set timeout 30
+  spawn sudo -i
+  expect {
+  "Enter Windows password:"
+    {
+      send "$env(PASSWORD)\n"
+        expect "root@$env(HOSTNAME):~#"
+      send "cd /tmp\n"
+      expect "root@$env(HOSTNAME):/tmp#"
+        send "curl -sLo minikube https://arm.sero.gic.ericsson.se/artifactory/proj-iopensrc-dev-generic-local/com/github/kubernetes/minikube/releases/download/$env(MINIKUBE_VERSION)/minikube-linux-amd64\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+        send "chmod +x minikube\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+        send "mv minikube /usr/local/bin/\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+        send "minikube version --short\n"
+        expect "root@$env(HOSTNAME):/tmp#"
+    }
+  }
+  exit 0
+  expect eof
+EOF
+}
+
+reinst_tools() {
+  export HOSTNAME
+  INSTALLED_MINIKUBE_VERSION=`minikube version --short=true | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+'`
+  if [[ $INSTALLED_MINIKUBE_VERSION != $MINIKUBE_VERSION ]]; then
+    echo "Installing new minikube version: $MINIKUBE_VERSION"
+        install_minikube
+  fi
+
+  INSTALLED_KUBERNETES_VERSION=`kubectl version --short | grep 'Client Version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+'`
+  if [[ $INSTALLED_KUBERNETES_VERSION != $KUBERNETES_VERSION ]]; then
+    echo "Installing new kubectl version: $KUBERNETES_VERSION"
+        install_kubectl
+  fi
+
+  INSTALLED_HELM_VERSION=`helm version --short | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+'`
+  if [[ $INSTALLED_HELM_VERSION != $HELM_VERSION ]]; then
+        echo "Installing new helm version: $HELM_VERSION"
+    install_helm
+  fi
+}
+
+alias reinst_eir='ft_pass; minikube delete; get_env; reinst_tools; minikube start --cni=bridge --mount --mount-string "/local:/hosthome" --container-runtime=containerd --cpus=6 --extra-config=kubelet.max-pods=220 --kubernetes-version="$KUBERNETES_VERSION" --memory=20480 --driver="docker" --addons metrics-server; knc ccsm; kns ccsm; ./mesh -n eir; ./nels; ./adp; ./pods-wait; ./testrunner -- --set ccsm="/hosthome/ccsm"; ./ccsm certs -n eir;'
+
+alias reinst_eir_client='k delete namespace client; knc client; kns client; ./mesh -n eir -N true; ./adp -N true; ./pods-wait; ./ccsm-eir-diasim -- --set eric-eir-s13diameter-client.env.server.serverAddress=eric-stm-diameter-traffic-tcp.ccsm --set eric-stm-diameter.initialConfig.sctp.enable=true; ./pods-wait'
+
+alias reinst_udm='ft_pass; minikube delete; get_env; reinst_tools; minikube start --cni=bridge --mount --mount-string "/local:/hosthome" --container-runtime=containerd --cpus=6 --extra-config=kubelet.max-pods=220 --kubernetes-version="$KUBERNETES_VERSION" --memory=20480 --driver="docker" --addons metrics-server; knc ccsm; kns ccsm; ./mesh; ./nels; ./adp; ./pods-wait; ./testrunner -- --set ccsm="/hosthome/ccsm"; ./ccsm certs'
